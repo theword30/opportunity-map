@@ -1,0 +1,927 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Student Opportunity Map — Almaty</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy: #0D1B2A;
+      --teal: #0D9488;
+      --teal-light: #14B8A6;
+      --teal-pale: #CCFBF1;
+      --white: #FFFFFF;
+      --offwhite: #F8FAFC;
+      --gray: #94A3B8;
+      --gray-dark: #475569;
+      --border: #E2E8F0;
+      --card-bg: #FFFFFF;
+      --sidebar-w: 380px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--offwhite);
+      color: var(--navy);
+      height: 100vh;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── HEADER ── */
+    header {
+      background: var(--navy);
+      padding: 0 24px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 100;
+      box-shadow: 0 2px 12px rgba(0,0,0,0.25);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo-pin {
+      width: 28px;
+      height: 28px;
+      background: var(--teal);
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: var(--white);
+      letter-spacing: 0.01em;
+    }
+
+    .logo-text span {
+      color: var(--teal-light);
+    }
+
+    .header-tag {
+      font-size: 11px;
+      font-weight: 500;
+      color: var(--gray);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── LAYOUT ── */
+    .app {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── SIDEBAR ── */
+    .sidebar {
+      width: var(--sidebar-w);
+      flex-shrink: 0;
+      background: var(--white);
+      display: flex;
+      flex-direction: column;
+      border-right: 1px solid var(--border);
+      overflow: hidden;
+    }
+
+    .sidebar-top {
+      padding: 20px 20px 0;
+      flex-shrink: 0;
+    }
+
+    .sidebar-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gray-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.07em;
+      margin-bottom: 14px;
+    }
+
+    /* Search */
+    .search-wrap {
+      position: relative;
+      margin-bottom: 14px;
+    }
+
+    .search-wrap input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      background: var(--offwhite);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-wrap input:focus { border-color: var(--teal); }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--gray);
+      font-size: 15px;
+    }
+
+    /* Filters */
+    .filters {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+
+    .filter-btn {
+      padding: 5px 12px;
+      border-radius: 20px;
+      border: 1.5px solid var(--border);
+      background: var(--white);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 12px;
+      font-weight: 500;
+      color: var(--gray-dark);
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .filter-btn:hover { border-color: var(--teal); color: var(--teal); }
+    .filter-btn.active { background: var(--teal); border-color: var(--teal); color: var(--white); }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 0 -20px;
+    }
+
+    /* Cards list */
+    .cards-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 20px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .cards-list::-webkit-scrollbar { width: 4px; }
+    .cards-list::-webkit-scrollbar-track { background: transparent; }
+    .cards-list::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+    .count-label {
+      font-size: 12px;
+      color: var(--gray);
+      font-weight: 500;
+      margin-bottom: 4px;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      cursor: pointer;
+      transition: all 0.18s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card::before {
+      content: '';
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      background: var(--teal);
+      opacity: 0;
+      transition: opacity 0.18s;
+    }
+
+    .card:hover { border-color: var(--teal-light); box-shadow: 0 4px 16px rgba(13,148,136,0.1); transform: translateY(-1px); }
+    .card:hover::before { opacity: 1; }
+    .card.active { border-color: var(--teal); box-shadow: 0 4px 20px rgba(13,148,136,0.15); }
+    .card.active::before { opacity: 1; }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 6px;
+      gap: 8px;
+    }
+
+    .card-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.3;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .card-tag {
+      font-size: 10px;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      flex-shrink: 0;
+      align-self: center;
+    }
+
+    .tag-steam    { background: #DCFCE7; color: #166534; }
+    .tag-olympiad { background: #FEF9C3; color: #854D0E; }
+    .tag-intern   { background: #EDE9FE; color: #5B21B6; }
+    .tag-volunteer{ background: #FFE4E6; color: #9F1239; }
+    .tag-club     { background: #DBEAFE; color: #1E40AF; }
+
+    .card-org {
+      font-size: 12px;
+      color: var(--gray);
+      margin-bottom: 6px;
+    }
+
+    .card-meta {
+      display: flex;
+      gap: 12px;
+      font-size: 11px;
+      color: var(--gray-dark);
+    }
+
+    .card-meta span { display: flex; align-items: center; gap: 3px; }
+
+    /* ── MAP ── */
+    #map {
+      flex: 1;
+      height: 100%;
+    }
+
+    /* ── DETAIL PANEL ── */
+    .detail-panel {
+      position: absolute;
+      bottom: 24px;
+      right: 24px;
+      width: 320px;
+      background: var(--white);
+      border-radius: 16px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+      padding: 20px;
+      z-index: 50;
+      display: none;
+      animation: slideUp 0.25s ease;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(12px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .detail-panel.visible { display: block; }
+
+    .detail-close {
+      position: absolute;
+      top: 14px; right: 14px;
+      background: var(--offwhite);
+      border: none;
+      border-radius: 50%;
+      width: 28px; height: 28px;
+      cursor: pointer;
+      font-size: 14px;
+      color: var(--gray-dark);
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.15s;
+    }
+
+    .detail-close:hover { background: var(--border); }
+
+    .detail-tag {
+      display: inline-block;
+      font-size: 10px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+
+    .detail-title {
+      font-family: 'DM Serif Display', serif;
+      font-size: 20px;
+      color: var(--navy);
+      margin-bottom: 6px;
+      line-height: 1.25;
+    }
+
+    .detail-org {
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 12px;
+    }
+
+    .detail-desc {
+      font-size: 13px;
+      color: var(--gray-dark);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .detail-info {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+      padding: 12px;
+      background: var(--offwhite);
+      border-radius: 10px;
+    }
+
+    .detail-info-row {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--gray-dark);
+    }
+
+    .detail-info-label { font-weight: 600; color: var(--navy); min-width: 60px; }
+
+    .detail-btn {
+      display: block;
+      width: 100%;
+      padding: 11px;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+      text-align: center;
+    }
+
+    .detail-btn:hover { background: #0B7A70; }
+
+    /* ── SUBMIT BUTTON ── */
+    .submit-fab {
+      position: absolute;
+      bottom: 24px;
+      left: calc(var(--sidebar-w) + 24px);
+      z-index: 50;
+      background: var(--navy);
+      color: var(--white);
+      border: none;
+      border-radius: 30px;
+      padding: 12px 20px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+      transition: all 0.18s;
+    }
+
+    .submit-fab:hover { background: var(--teal); transform: translateY(-2px); }
+
+    /* ── MODAL ── */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .modal-overlay.visible { display: flex; }
+
+    .modal {
+      background: var(--white);
+      border-radius: 20px;
+      padding: 32px;
+      width: 480px;
+      max-width: 95vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      animation: slideUp 0.25s ease;
+    }
+
+    .modal h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      margin-bottom: 6px;
+    }
+
+    .modal-sub {
+      font-size: 13px;
+      color: var(--gray);
+      margin-bottom: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--gray-dark);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin-bottom: 6px;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      color: var(--navy);
+      background: var(--offwhite);
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus { border-color: var(--teal); }
+
+    .form-group textarea { resize: vertical; min-height: 80px; }
+
+    .form-row { display: flex; gap: 12px; }
+    .form-row .form-group { flex: 1; }
+
+    .modal-actions {
+      display: flex;
+      gap: 10px;
+      margin-top: 24px;
+    }
+
+    .btn-primary {
+      flex: 1;
+      padding: 12px;
+      background: var(--teal);
+      color: var(--white);
+      border: none;
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+
+    .btn-primary:hover { background: #0B7A70; }
+
+    .btn-secondary {
+      padding: 12px 20px;
+      background: var(--offwhite);
+      color: var(--gray-dark);
+      border: 1.5px solid var(--border);
+      border-radius: 10px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+    }
+
+    .btn-secondary:hover { border-color: var(--gray); }
+
+    .success-msg {
+      text-align: center;
+      padding: 20px 0;
+      display: none;
+    }
+
+    .success-msg .check { font-size: 40px; margin-bottom: 12px; }
+    .success-msg h3 { font-family: 'DM Serif Display', serif; font-size: 22px; margin-bottom: 8px; }
+    .success-msg p { font-size: 14px; color: var(--gray); }
+
+    /* map container relative for FAB */
+    .map-wrap {
+      flex: 1;
+      position: relative;
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <div class="logo-pin"></div>
+    <div class="logo-text">Student <span>Opportunity</span> Map</div>
+  </div>
+  <div class="header-tag">Almaty · 2026</div>
+</header>
+
+<div class="app">
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-top">
+      <div class="sidebar-title">Explore Opportunities</div>
+
+      <div class="search-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search by name or keyword…" oninput="filterCards()" />
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" data-cat="all" onclick="setFilter('all', this)">All</button>
+        <button class="filter-btn" data-cat="STEAM" onclick="setFilter('STEAM', this)">STEAM</button>
+        <button class="filter-btn" data-cat="Olympiad" onclick="setFilter('Olympiad', this)">Olympiad</button>
+        <button class="filter-btn" data-cat="Internship" onclick="setFilter('Internship', this)">Internship</button>
+        <button class="filter-btn" data-cat="Volunteer" onclick="setFilter('Volunteer', this)">Volunteer</button>
+        <button class="filter-btn" data-cat="Club" onclick="setFilter('Club', this)">Club</button>
+        <button class="filter-btn" data-cat="free" onclick="setFilter('free', this)">Free only</button>
+      </div>
+
+      <div class="divider"></div>
+    </div>
+
+    <div class="cards-list" id="cardsList">
+      <div class="count-label" id="countLabel"></div>
+    </div>
+  </aside>
+
+  <!-- MAP -->
+  <div class="map-wrap">
+    <div id="map"></div>
+
+    <!-- Submit FAB -->
+    <button class="submit-fab" onclick="openModal()">
+      <span>＋</span> Submit an Opportunity
+    </button>
+
+    <!-- Detail Panel -->
+    <div class="detail-panel" id="detailPanel">
+      <button class="detail-close" onclick="closeDetail()">✕</button>
+      <div class="detail-tag" id="dTag"></div>
+      <div class="detail-title" id="dTitle"></div>
+      <div class="detail-org" id="dOrg"></div>
+      <div class="detail-desc" id="dDesc"></div>
+      <div class="detail-info">
+        <div class="detail-info-row"><span class="detail-info-label">📅 Date</span><span id="dDate"></span></div>
+        <div class="detail-info-row"><span class="detail-info-label">🎂 Age</span><span id="dAge"></span></div>
+        <div class="detail-info-row"><span class="detail-info-label">💰 Cost</span><span id="dCost"></span></div>
+        <div class="detail-info-row"><span class="detail-info-label">📍 Where</span><span id="dLoc"></span></div>
+      </div>
+      <button class="detail-btn" id="dBtn">Register Now →</button>
+    </div>
+  </div>
+</div>
+
+<!-- SUBMIT MODAL -->
+<div class="modal-overlay" id="modalOverlay">
+  <div class="modal">
+    <div id="formContent">
+      <h2>Submit an Opportunity</h2>
+      <p class="modal-sub">Know about a workshop, club, or event? Add it to the map for other students.</p>
+
+      <div class="form-group">
+        <label>Opportunity Name *</label>
+        <input type="text" id="fName" placeholder="e.g. Robotics Workshop at NURIS" />
+      </div>
+
+      <div class="form-group">
+        <label>Organizer / School / Company *</label>
+        <input type="text" id="fOrg" placeholder="e.g. Nazarbayev University" />
+      </div>
+
+      <div class="form-group">
+        <label>Category *</label>
+        <select id="fCat">
+          <option value="">Select a category</option>
+          <option>STEAM</option>
+          <option>Olympiad</option>
+          <option>Internship</option>
+          <option>Volunteer</option>
+          <option>Club</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Description</label>
+        <textarea id="fDesc" placeholder="What is this opportunity about? Who is it for?"></textarea>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Date</label>
+          <input type="date" id="fDate" />
+        </div>
+        <div class="form-group">
+          <label>Cost</label>
+          <input type="text" id="fCost" placeholder="Free / 5000 KZT" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Min Age</label>
+          <input type="number" id="fAgeMin" placeholder="12" min="5" max="25" />
+        </div>
+        <div class="form-group">
+          <label>Max Age</label>
+          <input type="number" id="fAgeMax" placeholder="18" min="5" max="25" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Location / Address in Almaty</label>
+        <input type="text" id="fAddr" placeholder="e.g. Dostyk Ave 13" />
+      </div>
+
+      <div class="modal-actions">
+        <button class="btn-secondary" onclick="closeModal()">Cancel</button>
+        <button class="btn-primary" onclick="submitForm()">Submit →</button>
+      </div>
+    </div>
+
+    <div class="success-msg" id="successMsg">
+      <div class="check">✅</div>
+      <h3>Opportunity Submitted!</h3>
+      <p>Thank you for contributing to the map.<br/>It will appear after a quick review.</p>
+      <div class="modal-actions" style="margin-top:20px">
+        <button class="btn-primary" onclick="closeModal()">Back to Map</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── DATA ──
+const opportunities = [
+  {
+    id: 1,
+    title: "Almaty Math Battles",
+    org: "Math Battles Community",
+    cat: "Olympiad",
+    desc: "Annual team-based math competition where students collaborate to solve challenging problems. Over 1,500 participants from 24 cities across Kazakhstan compete each year. Fun format, great prizes.",
+    date: "Annual — registration opens each fall",
+    age: "12–18",
+    cost: "Free",
+    location: "Baiterek School of Science and Technology, Almaty",
+    link: "https://mathbattles.org/en",
+    lat: 43.2380, lng: 76.9300
+  },
+  {
+    id: 2,
+    title: "Technovation Girls Kazakhstan",
+    org: "Technovation KZ / Kinergy Foundation",
+    cat: "STEAM",
+    desc: "Global tech entrepreneurship program for girls aged 8–18. Teams build a mobile app or AI project to solve a real community problem, then pitch it to judges. No prior coding experience needed.",
+    date: "Season runs August–April annually",
+    age: "8–18 (girls)",
+    cost: "Free",
+    location: "Various locations, Almaty",
+    link: "https://technovation.kz",
+    lat: 43.2350, lng: 76.9100
+  },
+  {
+    id: 3,
+    title: "FIRST Robotics Kazakhstan",
+    org: "USTEM Foundation",
+    cat: "STEAM",
+    desc: "Kazakhstan's chapter of the global FIRST robotics program. Students aged 6–18 join teams to design, build and program robots, competing locally and potentially at world championships in the US.",
+    date: "Annual — season runs fall to spring",
+    age: "6–18",
+    cost: "Free to apply",
+    location: "Haileybury Almaty & various venues",
+    link: "https://www.instagram.com/firstroboticskz",
+    lat: 43.2200, lng: 76.9500
+  },
+  {
+    id: 4,
+    title: "MUN Kazakhstan",
+    org: "MUN Kazakhstan",
+    cat: "Club",
+    desc: "Model United Nations community for school students across Kazakhstan. Participants simulate UN committees, debate global issues and develop public speaking, diplomacy and critical thinking skills.",
+    date: "Ongoing — conferences held throughout the year",
+    age: "13–18",
+    cost: "Free",
+    location: "Various schools, Almaty",
+    link: "https://www.instagram.com/mun_kazakhstan",
+    lat: 43.2500, lng: 76.9400
+  }
+];
+
+let map, markers = [], activeFilter = 'all', activeId = null;
+const tagClasses = { STEAM: 'tag-steam', Olympiad: 'tag-olympiad', Internship: 'tag-intern', Volunteer: 'tag-volunteer', Club: 'tag-club' };
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    center: { lat: 43.238, lng: 76.945 },
+    zoom: 12,
+    mapTypeControl: false,
+    streetViewControl: false,
+    fullscreenControl: false,
+    gestureHandling: 'auto',
+    styles: [
+      { featureType: "all", elementType: "geometry", stylers: [{ color: "#f0f4f8" }] },
+      { featureType: "water", elementType: "geometry", stylers: [{ color: "#cce5f6" }] },
+      { featureType: "road", elementType: "geometry", stylers: [{ color: "#ffffff" }] },
+      { featureType: "road.arterial", elementType: "geometry", stylers: [{ color: "#e8eef5" }] },
+      { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+      { featureType: "transit", stylers: [{ visibility: "off" }] },
+      { featureType: "administrative", elementType: "labels.text.fill", stylers: [{ color: "#475569" }] },
+    ]
+  });
+
+  opportunities.forEach(op => {
+    const marker = new google.maps.Marker({
+      position: { lat: op.lat, lng: op.lng },
+      map,
+      title: op.title,
+      icon: {
+        path: 'M 0,0 C -2,-2 -4,-4 -4,-7 A 4,4 0 0,1 4,-7 C 4,-4 2,-2 0,0 Z',
+        scale: 3.5,
+        fillColor: '#0D9488',
+        fillOpacity: 1,
+        strokeColor: '#0D1B2A',
+        strokeWeight: 1.5,
+        anchor: new google.maps.Point(0, 0),
+      }
+    });
+
+    marker.addListener('click', () => showDetail(op.id));
+    markers.push({ op, marker });
+  });
+
+  renderCards(opportunities);
+}
+
+function renderCards(list) {
+  const container = document.getElementById('cardsList');
+  const label = document.getElementById('countLabel');
+  label.textContent = `${list.length} opportunit${list.length === 1 ? 'y' : 'ies'} found`;
+
+  const existing = container.querySelectorAll('.card');
+  existing.forEach(e => e.remove());
+
+  list.forEach(op => {
+    const card = document.createElement('div');
+    card.className = 'card' + (op.id === activeId ? ' active' : '');
+    card.id = 'card-' + op.id;
+    card.innerHTML = `
+      <div class="card-header">
+        <div class="card-title">${op.title}</div>
+        <span class="card-tag ${tagClasses[op.cat]}">${op.cat}</span>
+      </div>
+      <div class="card-org">${op.org}</div>
+      <div class="card-meta">
+        <span>📅 ${op.date}</span>
+        <span>💰 ${op.cost}</span>
+        <span>🎂 ${op.age}</span>
+      </div>
+    `;
+    card.addEventListener('click', () => showDetail(op.id));
+    container.appendChild(card);
+  });
+}
+
+function setFilter(cat, btn) {
+  activeFilter = cat;
+  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  filterCards();
+}
+
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  const filtered = opportunities.filter(op => {
+    const matchCat = activeFilter === 'all' || (activeFilter === 'free' ? op.cost === 'Free' : op.cat === activeFilter);
+    const matchQ = !q || op.title.toLowerCase().includes(q) || op.org.toLowerCase().includes(q) || op.desc.toLowerCase().includes(q);
+    return matchCat && matchQ;
+  });
+
+  markers.forEach(({ op, marker }) => {
+    const visible = filtered.some(f => f.id === op.id);
+    marker.setVisible(visible);
+    marker.setIcon({
+      path: 'M 0,0 C -2,-2 -4,-4 -4,-7 A 4,4 0 0,1 4,-7 C 4,-4 2,-2 0,0 Z',
+      scale: 3.5,
+      fillColor: op.id === activeId ? '#0D1B2A' : '#0D9488',
+      fillOpacity: 1,
+      strokeColor: '#0D1B2A',
+      strokeWeight: 1.5,
+      anchor: new google.maps.Point(0, 0),
+    });
+  });
+
+  renderCards(filtered);
+}
+
+function showDetail(id) {
+  const op = opportunities.find(o => o.id === id);
+  if (!op) return;
+  activeId = id;
+
+  document.getElementById('dTag').textContent = op.cat;
+  document.getElementById('dTag').className = 'detail-tag ' + tagClasses[op.cat];
+  document.getElementById('dTitle').textContent = op.title;
+  document.getElementById('dOrg').textContent = op.org;
+  document.getElementById('dDesc').textContent = op.desc;
+  document.getElementById('dDate').textContent = op.date;
+  document.getElementById('dAge').textContent = op.age;
+  document.getElementById('dCost').textContent = op.cost;
+  document.getElementById('dLoc').textContent = op.location;
+  document.getElementById('dBtn').onclick = () => window.open(op.link, '_blank');
+
+  document.getElementById('detailPanel').classList.add('visible');
+
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  const card = document.getElementById('card-' + id);
+  if (card) { card.classList.add('active'); card.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+
+  markers.forEach(({ op: o, marker }) => {
+    marker.setIcon({
+      path: 'M 0,0 C -2,-2 -4,-4 -4,-7 A 4,4 0 0,1 4,-7 C 4,-4 2,-2 0,0 Z',
+      scale: o.id === id ? 4.5 : 3.5,
+      fillColor: o.id === id ? '#0D1B2A' : '#0D9488',
+      fillOpacity: 1,
+      strokeColor: o.id === id ? '#0D9488' : '#0D1B2A',
+      strokeWeight: 1.5,
+      anchor: new google.maps.Point(0, 0),
+    });
+  });
+
+  map.panTo({ lat: op.lat, lng: op.lng });
+}
+
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('visible');
+  activeId = null;
+  markers.forEach(({ marker }) => marker.setIcon({
+    path: 'M 0,0 C -2,-2 -4,-4 -4,-7 A 4,4 0 0,1 4,-7 C 4,-4 2,-2 0,0 Z',
+    scale: 3.5,
+    fillColor: '#0D9488',
+    fillOpacity: 1,
+    strokeColor: '#0D1B2A',
+    strokeWeight: 1.5,
+    anchor: new google.maps.Point(0, 0),
+  }));
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+}
+
+function openModal() {
+  document.getElementById('modalOverlay').classList.add('visible');
+  document.getElementById('formContent').style.display = 'block';
+  document.getElementById('successMsg').style.display = 'none';
+}
+
+function closeModal() {
+  document.getElementById('modalOverlay').classList.remove('visible');
+}
+
+function submitForm() {
+  const name = document.getElementById('fName').value.trim();
+  const org  = document.getElementById('fOrg').value.trim();
+  const cat  = document.getElementById('fCat').value;
+  if (!name || !org || !cat) { alert('Please fill in the required fields (Name, Organizer, Category).'); return; }
+  document.getElementById('formContent').style.display = 'none';
+  document.getElementById('successMsg').style.display = 'block';
+  // Reset
+  ['fName','fOrg','fDesc','fDate','fCost','fAgeMin','fAgeMax','fAddr'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('fCat').value = '';
+}
+
+window.addEventListener('click', e => {
+  if (e.target === document.getElementById('modalOverlay')) closeModal();
+});
+</script>
+
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDROgsjWSqnqWmBuvZz22HguVfygddlvGw&callback=initMap">
+</script>
+
+</body>
+</html>
