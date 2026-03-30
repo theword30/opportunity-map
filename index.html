@@ -51,24 +51,11 @@
       gap: 10px;
     }
 
-    .logo-pin {
-      width: 28px;
-      height: 28px;
-      background: var(--teal);
-      border-radius: 50% 50% 50% 0;
-      transform: rotate(-45deg);
-      flex-shrink: 0;
-    }
-
     .logo-text {
       font-family: 'DM Serif Display', serif;
-      font-size: 18px;
+      font-size: 20px;
       color: var(--white);
       letter-spacing: 0.01em;
-    }
-
-    .logo-text span {
-      color: var(--teal-light);
     }
 
     .header-tag {
@@ -537,8 +524,25 @@
 
 <header>
   <div class="logo">
-    <div class="logo-pin"></div>
-    <div class="logo-text">Student <span>Opportunity</span> Map</div>
+    <svg width="36" height="36" viewBox="0 0 80 80" style="flex-shrink:0">
+      <rect x="2" y="2" width="76" height="76" rx="12" fill="none" stroke="#0D9488" stroke-width="2" opacity="0.3"/>
+      <line x1="2" y1="29" x2="78" y2="29" stroke="#0D9488" stroke-width="0.8" opacity="0.2"/>
+      <line x1="2" y1="40" x2="78" y2="40" stroke="#0D9488" stroke-width="0.8" opacity="0.2"/>
+      <line x1="2" y1="51" x2="78" y2="51" stroke="#0D9488" stroke-width="0.8" opacity="0.2"/>
+      <line x1="29" y1="2" x2="29" y2="78" stroke="#0D9488" stroke-width="0.8" opacity="0.2"/>
+      <line x1="40" y1="2" x2="40" y2="78" stroke="#0D9488" stroke-width="0.8" opacity="0.2"/>
+      <line x1="51" y1="2" x2="51" y2="78" stroke="#0D9488" stroke-width="0.8" opacity="0.2"/>
+      <circle cx="29" cy="29" r="4" fill="white" opacity="0.2"/>
+      <circle cx="40" cy="29" r="4" fill="white" opacity="0.2"/>
+      <circle cx="51" cy="29" r="4" fill="white" opacity="0.2"/>
+      <circle cx="29" cy="40" r="4" fill="white" opacity="0.2"/>
+      <circle cx="40" cy="40" r="8" fill="#0D9488"/>
+      <circle cx="51" cy="40" r="4" fill="white" opacity="0.2"/>
+      <circle cx="29" cy="51" r="4" fill="white" opacity="0.2"/>
+      <circle cx="40" cy="51" r="4" fill="white" opacity="0.2"/>
+      <circle cx="51" cy="51" r="4" fill="white" opacity="0.2"/>
+    </svg>
+    <div class="logo-text">Opportix</div>
   </div>
   <div class="header-tag">Almaty · 2026</div>
 </header>
